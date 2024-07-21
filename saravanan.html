@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Saravanan Cost - Yogasai Construction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .other-cost-input {
+            display: none;
+        }
+        .cost-list {
+            margin-top: 20px;
+        }
+        .cost-item {
+            position: relative;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 10px 0;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        .cost-item button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        .cost-item button:hover {
+            background: #c82333;
+        }
+        .cost-item i {
+            font-size: 12px;
+        }
+        nav {
+            margin-top: 20px;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #0056b3;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cost for Mr. Saravanan</h1>
+        <label for="work-type">Type of Work:</label>
+        <select id="work-type" onchange="toggleOtherInput()">
+            <option value="petrol">Petrol</option>
+            <option value="food">Food</option>
+            <option value="others">Others</option>
+        </select>
+        <input type="text" id="other-work" class="other-cost-input" placeholder="Enter other work description">
+        <label for="cost">Cost:</label>
+        <input type="number" id="cost" placeholder="Enter cost">
+        <button onclick="addSaravananCost()">Add Work Cost</button>
+
+        <div class="cost-list" id="cost-list">
+            <h2>Work Cost List</h2>
+        </div>
+        <div id="total-cost">
+            <h2>Total Cost: ₹0.00</h2>
+        </div>
+        <nav>
+            <a href="index.html">Labour Cost</a> |
+            <a href="total.html">View Total Costs</a>
+        </nav>
+    </div>
+
+    <script>
+        let saravananCosts = [];
+
+        function toggleOtherInput() {
+            const workType = document.getElementById('work-type').value;
+            const otherInput = document.getElementById('other-work');
+            if (workType === 'others') {
+                otherInput.style.display = 'block';
+            } else {
+                otherInput.style.display = 'none';
+            }
+        }
+
+        function addSaravananCost() {
+            let workType = document.getElementById('work-type').value;
+            if (workType === 'others') {
+                workType = document.getElementById('other-work').value;
+                if (workType === "") {
+                    alert("Please enter the description for other work.");
+                    return;
+                }
+            }
+            const cost = parseFloat(document.getElementById('cost').value);
+            if (isNaN(cost)) {
+                alert("Please enter a valid cost.");
+                return;
+            }
+            saravananCosts.push({ workType, cost });
+            localStorage.setItem('saravananCosts', JSON.stringify(saravananCosts));
+            displaySaravananCosts();
+        }
+
+        function deleteSaravananCost(index) {
+            saravananCosts.splice(index, 1);
+            localStorage.setItem('saravananCosts', JSON.stringify(saravananCosts));
+            displaySaravananCosts();
+        }
+
+        function displaySaravananCosts() {
+            const costList = document.getElementById('cost-list');
+            costList.innerHTML = "<h2>Work Cost List</h2>";
+            let totalCost = 0;
+            saravananCosts.forEach((item, index) => {
+                costList.innerHTML += `
+                    <div class="cost-item">
+                        ${item.workType}: ₹${item.cost.toFixed(2)}
+                        <button onclick="deleteSaravananCost(${index})"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                totalCost += item.cost;
+            });
+            document.getElementById('total-cost').innerHTML = `<h2>Total Cost: ₹${totalCost.toFixed(2)}</h2>`;
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem('saravananCosts')) {
+                saravananCosts = JSON.parse(localStorage.getItem('saravananCosts'));
+                displaySaravananCosts();
+            }
+        }
+    </script>
+</body>
+</html>

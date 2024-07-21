@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Costs - Yogasai Construction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f4f4f4, #e9ecef);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 10px;
+            animation: slideIn 1s ease-out;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-top: 0;
+        }
+        .cost-section {
+            margin-top: 20px;
+        }
+        .cost-section p {
+            color: #555;
+            padding: 12px;
+            background: #e9ecef;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .cost-section p:hover {
+            background: #d3d3d3;
+        }
+        nav {
+            margin-top: 20px;
+            text-align: center;
+        }
+        nav a, nav button {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: inherit;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #0056b3;
+        }
+        nav button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        nav button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #007bff;
+        }
+        .header .datetime {
+            font-size: 1.1em;
+            color: #555;
+            font-style: italic;
+        }
+        .final-total {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.3em;
+            color: #007bff;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { color: #007bff; }
+            50% { color: #0056b3; }
+            100% { color: #007bff; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Yogasai Construction</h1>
+            <div class="datetime" id="datetime"></div>
+            <hr>
+        </div>
+        <h1>Total Costs</h1>
+        <div class="cost-section" id="labour-cost-section">
+            <h2>Labour Costs</h2>
+            <div id="labour-cost-list"></div>
+            <p id="total-labour-cost">Total Labour Cost: ₹0.00</p>
+        </div>
+        <div class="cost-section" id="saravanan-cost-section">
+            <h2>Mr. Saravanan's Costs</h2>
+            <div id="saravanan-cost-list"></div>
+            <p id="total-saravanan-cost">Total Saravanan Cost: ₹0.00</p>
+        </div>
+        <div class="final-total">
+            <h2 id="final-total-cost">Final Total Cost: ₹0.00</h2>
+        </div>
+        <nav>
+            <a href="index.html">Labour Cost</a> |
+            <a href="saravanan.html">Mr. Saravanan Cost</a> |
+            <button onclick="confirmNewList()">New List</button>
+        </nav>
+    </div>
+
+    <script>
+        function displayCosts() {
+            // Display labour costs
+            const labourCosts = JSON.parse(localStorage.getItem('workCosts')) || [];
+            const labourCostList = document.getElementById('labour-cost-list');
+            let totalLabourCost = 0;
+
+            labourCostList.innerHTML = "";
+            labourCosts.forEach(item => {
+                labourCostList.innerHTML += `<p>${item.workName}: ₹${item.labourCost.toFixed(2)}</p>`;
+                totalLabourCost += item.labourCost;
+            });
+
+            document.getElementById('total-labour-cost').innerText = `Total Labour Cost: ₹${totalLabourCost.toFixed(2)}`;
+
+            // Display Saravanan's costs
+            const saravananCosts = JSON.parse(localStorage.getItem('saravananCosts')) || [];
+            const saravananCostList = document.getElementById('saravanan-cost-list');
+            let totalSaravananCost = 0;
+
+            saravananCostList.innerHTML = "";
+            saravananCosts.forEach(item => {
+                saravananCostList.innerHTML += `<p>${item.workType}: ₹${item.cost.toFixed(2)}</p>`;
+                totalSaravananCost += item.cost;
+            });
+
+            document.getElementById('total-saravanan-cost').innerText = `Total Saravanan Cost: ₹${totalSaravananCost.toFixed(2)}`;
+
+            // Calculate final total cost
+            const finalTotalCost = totalLabourCost + totalSaravananCost;
+            document.getElementById('final-total-cost').innerText = `Final Total Cost: ₹${finalTotalCost.toFixed(2)}`;
+        }
+
+        function displayDateTime() {
+            const now = new Date();
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const day = days[now.getDay()];
+            const date = now.toLocaleDateString();
+            const time = now.toLocaleTimeString();
+            document.getElementById('datetime').innerText = `${day}, ${date} - ${time}`;
+        }
+
+        function confirmNewList() {
+            if (confirm("Are you sure you want to start a new list? This will clear all existing data.")) {
+                localStorage.removeItem('workCosts');
+                localStorage.removeItem('saravananCosts');
+                window.location.href = 'index.html';
+            }
+        }
+
+        window.onload = function() {
+            displayCosts();
+            displayDateTime();
+            setInterval(displayDateTime, 1000); 
+        };
+    </script>
+</body>
+</html>

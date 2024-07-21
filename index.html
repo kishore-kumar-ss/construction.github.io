@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labour Cost - Yogasai Construction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+          body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; /* Ensures content fills viewport */
+    }
+
+    .container {
+      max-width: 600px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      animation: enter-container 0.3s ease-in-out forwards;
+    }
+
+    @keyframes enter-container {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: bold;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .cost-list {
+      margin-top: 20px;
+    }
+
+    .cost-item {
+      position: relative;
+      padding: 15px 20px;
+      background: #f4f4f4;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .cost-item:hover {
+      background-color: #e9ecef;
+    }
+
+    .delete-button {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .delete-button:hover {
+      background: #c82333;
+    }
+
+    nav {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #007bff;
+    }
+  </style></head>
+<body>
+    <div class="container">
+        <h1>Labour Cost</h1>
+        <label for="work-name">Work Name:</label>
+        <input type="text" id="work-name" placeholder="Enter work name">
+        <label for="labour-cost">Labour Cost:</label>
+        <input type="number" id="labour-cost" placeholder="Enter labour cost">
+        <button onclick="addWorkCost()">Add Work Cost</button>
+
+        <div class="cost-list" id="cost-list">
+            <h2>Work Cost List</h2>
+        </div>
+        <div id="total-cost">
+            <h2>Total Cost: ₹0.00</h2>
+        </div>
+        <nav>
+            <a href="saravanan.html">Mr. Saravanan Cost</a> |
+            <a href="total.html">View Total Costs</a>
+        </nav>
+    </div>
+
+    <script>
+        let workCosts = [];
+
+        function addWorkCost() {
+            const workName = document.getElementById('work-name').value;
+            const labourCost = parseFloat(document.getElementById('labour-cost').value);
+            if (workName === "" || isNaN(labourCost)) {
+                alert("Please enter valid work name and labour cost.");
+                return;
+            }
+            workCosts.push({ workName, labourCost });
+            localStorage.setItem('workCosts', JSON.stringify(workCosts));
+            displayWorkCosts();
+        }
+
+        function deleteWorkCost(index) {
+            workCosts.splice(index, 1);
+            localStorage.setItem('workCosts', JSON.stringify(workCosts));
+            displayWorkCosts();
+        }
+
+        function displayWorkCosts() {
+            const costList = document.getElementById('cost-list');
+            costList.innerHTML = "<h2>Work Cost List</h2>";
+            let totalCost = 0;
+            workCosts.forEach((item, index) => {
+                costList.innerHTML += `
+                    <div class="cost-item">
+                        ${item.workName}: ₹${item.labourCost.toFixed(2)}
+                        <button class="delete-button" onclick="deleteWorkCost(${index})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                totalCost += item.labourCost;
+            });
+            document.getElementById('total-cost').innerHTML = `<h2>Total Cost: ₹${totalCost.toFixed(2)}</h2>`;
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem('workCosts')) {
+                workCosts = JSON.parse(localStorage.getItem('workCosts'));
+                displayWorkCosts();
+            }
+        }
+    </script>
+</body>
+</html>
